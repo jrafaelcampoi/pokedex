@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#cfffff">
+    <meta name="description" content="Pokedex integrada com API oficial">
+    <meta name="keywords" content="api, pokemon, pokedex">
+    <meta name="author" content="João Rafael de Souza Campoi - @jrafaelcampoi">
+    <link rel="shortcut icon" href="pokebola.png" type="image/x-icon">
+    <title>Pokedex</title>
+
+    <style>
+    * {margin: 0; padding: 0; box-sizing: border-box; user-select: none;}
+
+    body {background-color: #cfffff;}
+
+    body::-webkit-scrollbar {width: 5px;}
+    
+    body::-webkit-scrollbar-track {background: #cfffff; opacity: 0;}
+    
+    body::-webkit-scrollbar-thumb {background-color: #6ec2cb; border-radius: 40px;}
+
+    @font-face {
+        font-family: Ralewayf;
+        src: url(Raleway.ttf);
+    }
+
+    main {
+        margin: 50px auto 80px;
+        max-width: 1200px;
+        background-color: #ffffff;
+        padding: 30px 2%;
+        border-radius: 15px;
+    }
+
+    main h2 {
+        font-size: 38px;
+        color: #ef5350;
+        text-align: center;
+        font-family: RalewayF;
+    }
+
+    .pokemon-boxes {
+        display: flex;
+        margin: 20px 0;
+        flex-wrap: wrap;
+    }
+
+    .pokemonbox {
+        width: 16%;
+        background-color: #f0f8ff;
+        margin: 20px 2%;
+        border-radius: 15px;
+    }
+
+    .pokemonbox img{width: 100%;}
+
+    .pokemonbox p{
+        color: #000;
+        font-size: 17px;
+        font-family: Calibri;
+        font-weight: bold;
+        text-align: center;
+        padding: 10px 0;
+        text-transform: capitalize;
+    }
+
+    main label {
+        font-size: 18px;
+        font-family: RalewayF;
+        padding-left: 30px;
+        font-weight: bold;
+    }
+
+    #quantidade {
+        outline: 0;
+        border: 0;
+        border-radius: 15px;
+        font-size: 18px;
+        color: #808080;
+    }
+
+    @media screen and (max-width: 768px) {
+        .pokemonbox{width: 29%; text-align: center;}
+        
+        .pokemonbox img{max-width: 300px;}
+
+        main {border-radius: 0; margin: 0;}
+
+        body::-webkit-scrollbar-track {background: #ffffff;}
+    }
+    </style>
+
+</head>
+
+<body>
+    <main>
+        <h2>Pokedex by @jrafaelcampoi</h2>
+        <br/>
+        <label>Quantidade de pokémons:</label>
+        <input id="quantidade" style="width:30%;height:40px;padding-left: 10px;" type="text" name="quantidade" />
+        </div>
+
+        <div class="pokemon-boxes"></div>
+
+    </main>
+
+    <script>
+    
+    var quantidade = document.getElementById('quantidade');
+
+    quantidade.addEventListener('keyup',()=>{        
+        pegaPokemons(quantidade.value);
+    })
+        
+    pegaPokemons(12);
+        
+    function pegaPokemons(quantidade){
+        fetch('https://pokeapi.co/api/v2/pokemon?limit='+quantidade)
+        .then(response => response.json())
+        .then(allpokemon => {
+
+            var pokemons = [];
+
+            allpokemon.results.map((val)=>{
+                
+                fetch(val.url)
+                .then(response => response.json())
+                .then(pokemonSingle => {
+                    pokemons.push({nome:val.name,imagem:pokemonSingle.sprites.front_default});
+                    
+
+                    if(pokemons.length == quantidade){
+                        //Finalizamos nossas requisições.
+
+                        
+                        var pokemonBoxes = document.querySelector('.pokemon-boxes');
+                        pokemonBoxes.innerHTML = "";
+
+                        // console.log(pokemons);
+                        pokemons.map(function(val){
+                        pokemonBoxes.innerHTML+=`
+                        
+                        <div class="pokemonbox">
+                            <img src="`+val.imagem+`" />
+                            <p>`+val.nome+`</p>
+                        </div>          
+                        `;
+        
+                        })
+                    }
+
+                })
+
+            })
+
+        
+        })
+    }
+    </script>
+
+</body>
+
+</html>
